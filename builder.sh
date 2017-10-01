@@ -1,4 +1,5 @@
 #!/bin/bash
+# Docker based LEDE/OpenWRT build environment
 set -e
 
 # base Tag to use for docker image
