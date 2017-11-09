@@ -2,6 +2,10 @@
 
 A simple docker image to compile LEDE/OpenWRT images from source.
 
+Look [here](https://github.com/jandelgado/lede-dockerbuilder) for a simpler 
+version which uses the LEDE/OpenWRT imager builder, which uses pre-compiled 
+packages to build the actual image.
+
 ## Usage
 
 ```
