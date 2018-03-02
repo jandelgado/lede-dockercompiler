@@ -28,7 +28,7 @@ EOT
 
 # build container 
 function build_docker_image {
-    echo "building image $IMAGE_TAG ..."
+    echo "building docker image $IMAGE_TAG ..."
 	$SUDO docker build -t $IMAGE_TAG docker
 }
 
