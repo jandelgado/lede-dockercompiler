@@ -12,7 +12,8 @@ script:
 - "./builder.sh build-docker-image --skip-sudo"
 
 after_success:
-- if [[ "$TRAVIS_BRANCH" != "master" ]]; then 
+- |
+  if [[ "$TRAVIS_BRANCH" != "master" ]]; then 
     docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" docker.io 
     docker tag ${IMAGE_TAG} ${IMAGE_TAG}:${TRAVIS_COMMIT}
     docker tag ${IMAGE_TAG} ${IMAGE_TAG}:latest 
