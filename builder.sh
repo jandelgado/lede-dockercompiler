@@ -1,15 +1,17 @@
 #!/bin/bash
 # Docker based LEDE/OpenWRT build environment
+# (c) 2019 Jan Delgado
 set -e
 
 # base Tag to use for docker image
-IMAGE_TAG=lede-imagecompiler
+DEF_IMAGE_TAG=openwrt-imagecompiler
+IMAGE_TAG=${IMAGE_TAG:-$DEF_IMAGE_TAG}
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 WORK_DIR=$SCRIPT_DIR/workdir
 
 function usage_and_exit {
     cat<<EOT
-Dockerized LEDE/OpenWRT compile environment.
+Dockerized OpenWRT compile environment.
 
 Usage: $1 COMMAND [OPTIONS] 
   COMMAND is one of:
@@ -17,8 +19,12 @@ Usage: $1 COMMAND [OPTIONS]
     shell             - start shell in docker container
 
   OPTIONS:
-  -o WORK_DIR         - working directory (default $WORK_DIR)
-  --skip-sudo         - call docker directly, without sudo
+    -o WORK_DIR       - working directory (default $WORK_DIR)
+    --skip-sudo       - call docker directly, without sudo
+
+Environment:
+  IMAGE_TAG           - Tag to be used for docker image. 
+                        (default: $DEF_IMAGE_TAG)
 
 Example:
   ./builder.sh shell
@@ -29,15 +35,15 @@ EOT
 # build container 
 function build_docker_image {
     echo "building docker image $IMAGE_TAG ..."
-	$SUDO docker build -t $IMAGE_TAG docker
+	$SUDO docker build -t "$IMAGE_TAG" docker
 }
 
 function run_cmd_in_container {
 	$SUDO docker run \
 			--rm \
-			-e GOSU_USER=`id -u`:`id -g` \
-            -v $(cd $WORK_DIR; pwd):/workdir:z \
-			-ti --rm $IMAGE_TAG "$@"
+			-e GOSU_USER="$(id -ur):$(id -g)" \
+            -v "$(cd "$WORK_DIR"; pwd)":/workdir:z \
+			-ti --rm "$IMAGE_TAG" "$@"
 }
 
 # run a shell in the container, useful for debugging.
@@ -52,7 +58,7 @@ function fail {
 }
 
 if [ $# -lt 1 ]; then
-    usage_and_exit $0
+    usage_and_exit "$0"
 fi
 
 COMMAND=$1; shift
@@ -76,6 +82,6 @@ case $COMMAND in
          build_docker_image  ;;
      shell) 
          run_shell ;;
-     *) usage_and_exit $0
+     *) usage_and_exit "$0"
 esac
 
