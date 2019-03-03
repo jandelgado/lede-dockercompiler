@@ -16,7 +16,7 @@ after_success:
   if [[ "$TRAVIS_BRANCH" != "master" ]]; then 
     echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin docker.io 
     docker tag ${IMAGE_TAG} ${IMAGE_TAG}:${TRAVIS_COMMIT}
-    docker tag ${IMAGE_TAG} ${IMAGE_TAG}:latest 
+    docker tag ${IMAGE_TAG}:${TRAVIS_COMMIT} ${IMAGE_TAG}:latest 
     docker push ${IMAGE_TAG}:${TRAVIS_COMMIT}
     docker push ${IMAGE_TAG}:latest 
   fi

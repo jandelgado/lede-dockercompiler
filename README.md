@@ -2,42 +2,78 @@
 
 A docker image to compile LEDE/OpenWRT images from source.
 
-Look [here](https://github.com/jandelgado/lede-dockerbuilder) for a simpler 
-version which uses the LEDE/OpenWRT imager builder, which uses pre-compiled 
+
+<!-- vim-markdown-toc GitLab -->
+
+* [Quickstart](#quickstart)
+* [Build and run docker image](#build-and-run-docker-image)
+* [Using the image](#using-the-image)
+    * [Basic usage](#basic-usage)
+    * [Compile an individual package](#compile-an-individual-package)
+    * [Adding a new package](#adding-a-new-package)
+        * [Build the OpenWRT SDK](#build-the-openwrt-sdk)
+        * [Create package structure](#create-package-structure)
+        * [Working with patches](#working-with-patches)
+            * [Change an existing patch](#change-an-existing-patch)
+* [Author and Copyright](#author-and-copyright)
+
+<!-- vim-markdown-toc -->
+
+Note: Look [here](https://github.com/jandelgado/lede-dockerbuilder) for a
+version which uses the LEDE/OpenWRT imager builder, which uses pre-compiled
 packages to build the actual image.
 
-## Usage
+## Quickstart
+
+You can directly start the image builder from the docker hub:
+
+```
+$ mkdir workdir
+$ docker run --rm -e GOSU_USER=`id -u`:`id -g` \
+             -v $(cd workdir; pwd):/workdir:z \
+             -ti --rm docker.io/jandelgado/openwrt-imagecompiler:latest bash
+```
+
+This will take you to a bash shell with an OpenWRT build environment. Local
+directory `workdir` will be mounted to `/workdir` in the container. See below
+for how to use the image.
+
+## Build and run docker image
+
+Use the `builder.sh` to build and run the docker image:
 
 ```
 Dockerized LEDE/OpenWRT compile environment.
 
-Usage: $1 COMMAND [OPTIONS] 
+Usage: $1 COMMAND [OPTIONS]
   COMMAND is one of:
     build-docker-image- build docker image
     shell             - start shell in docker container
 
   OPTIONS:
-  -o WORK_DIR         - working directory 
+  -o WORK_DIR         - working directory
   --skip-sudo         - call docker directly, without sudo
 
 Example:
   ./builder.sh shell
 ```
 
-First build the docker image with `./builder.sh build-docker-image`, 
+First build the docker image with `./builder.sh build-docker-image`,
 then put your source files in the `workdir/` directory and start the acutal
 container with the OpenWRT build environment with `./builder.sh shell`.
 
-The last command will open a shell in the docker container with local the 
-`workdir/` mounted to the directory `/workdir` in the container. Since 
+The last command will open a shell in the docker container with local the
+`workdir/` mounted to the directory `/workdir` in the container. Since
 workdir is externally mounted, it's contents will survive container restarts.
 
-## Example build session
+## Using the image
 
-Create the docker image and start a container as described above.  This will
-take you straight into a shell in the container, with the local `workdir`
-directory mounted as a volume to `/workdir` inside the container. On success,
-you'll see a prompt like `builder@567cbabfb36b:/workdir$`.  
+### Basic usage
+
+Start a container as described above.  This will take you straight into a shell
+in the container, with the local `workdir` directory mounted as a volume to
+`/workdir` inside the container. On success, you'll see a prompt like
+`builder@567cbabfb36b:/workdir$`.
 
 Now execute the following commands in the container to prepare the OpenWRT
 source (see [this page for more
@@ -64,17 +100,18 @@ $ make packages/network/utils/tcpdump/install
 
 Add `V=s` for enhanced verbosity.
 
-## Adding a new package
+### Adding a new package
 
-In this chapter I am going to create a package for the 
-[udptunnel](http://www.cs.columbia.edu/~lennox/udptunnel/) tool.
+This describes how to add a new OpenWRT package. We use the
+[udptunnel](http://www.cs.columbia.edu/~lennox/udptunnel/) tool as an
+example.
 
 See also
 
 * https://openwrt.org/docs/guide-developer/packages
 * https://github.com/openwrt/packages/blob/master/CONTRIBUTING.md
 
-### Build the OpenWRT SDK
+#### Build the OpenWRT SDK
 
 First we need to build the OpenWRT SDK:
 
@@ -83,12 +120,12 @@ $ make tools/install
 $ make toolchain/install
 ```
 
-### Create package structure
+#### Create package structure
 
-We need to create a directory in a suitable place under the `package/` directory 
+We need to create a directory in a suitable place under the `package/` directory
 and create at least a [Makefile as described here.](https://openwrt.org/docs/guide-developer/packages). We will place our package in `package/network/util/udptunnel`.
 
-### Working with patches
+#### Working with patches
 
 (Adapted from https://openwrt.org/docs/guide-developer/patches)
 
@@ -102,7 +139,7 @@ From the root of your OpenWRT tree, execute:
 $ make package/network/util/udptunnel/{clean,prepare} V=s QUILT=1
 ```
 
-Then cd into the prepared source directory with 
+Then cd into the prepared source directory with
 ```
 $ cd build_dir/target-*/udptunnel-*
 ```
@@ -139,7 +176,7 @@ we can update the patch file, `010-main_code_fix.patch`:
 $ quilt refresh
 ```
 
-Change back to root of your OpenWRT tree and update the package with the 
+Change back to root of your OpenWRT tree and update the package with the
 patch:
 
 ```bash
@@ -169,7 +206,7 @@ Depending on your architecture, the resulting `ipk` package can be found under
 `./bin/packages/mipsel_24kc/base/udptunnel_1.1-1_mipsel_24kc.ipk`.
 
 
-### Change an existing patch
+##### Change an existing patch
 
 The workflow to change an exisiting patch is similar to the above described
 workflow:
@@ -186,10 +223,10 @@ $ quilt edit udptunnel.c
 $ quilt diff
 $ quilt refresh
 $ ( cd ../../.. && make package/network/utils/udptunnel/update V=s )  # apply patches
-$ ( cd ../../.. && make package/network/utils/udptunnel/{clean,compile} V=s )  
+$ ( cd ../../.. && make package/network/utils/udptunnel/{clean,compile} V=s )
 ```
 
-## Author
+## Author and Copyright
 
-Jan Delgado <jdelgado[at]gmx.net>
+(C) Copyright 2019 Jan Delgado <jdelgado[at]gmx.net>
 
