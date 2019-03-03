@@ -31,7 +31,7 @@ You can directly start the image builder from the docker hub:
 
 ```
 $ mkdir workdir
-$ docker run --rm -e GOSU_USER=`id -u`:`id -g` \
+$ docker run --rm -e GOSU_USER="$(id -ur):$(id -g)" \
              -v $(cd workdir; pwd):/workdir:z \
              -ti --rm docker.io/jandelgado/openwrt-imagecompiler:latest bash
 ```
