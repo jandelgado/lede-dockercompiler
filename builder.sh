@@ -41,8 +41,8 @@ function build_docker_image {
 function run_cmd_in_container {
 	$SUDO docker run \
 			--rm \
-			-e GOSU_USER=`id -u`:`id -g` \
-            -v $(cd $WORK_DIR; pwd):/workdir:z \
+			-e GOSU_USER="$(id -ur):$(id -g)" \
+            -v "$(cd "$WORK_DIR"; pwd)":/workdir:z \
 			-ti --rm "$IMAGE_TAG" "$@"
 }
 
@@ -58,7 +58,7 @@ function fail {
 }
 
 if [ $# -lt 1 ]; then
-    usage_and_exit $0
+    usage_and_exit "$0"
 fi
 
 COMMAND=$1; shift
@@ -82,6 +82,6 @@ case $COMMAND in
          build_docker_image  ;;
      shell) 
          run_shell ;;
-     *) usage_and_exit $0
+     *) usage_and_exit "$0"
 esac
 
