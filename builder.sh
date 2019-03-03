@@ -4,13 +4,14 @@
 set -e
 
 # base Tag to use for docker image
-IMAGE_TAG=${IMAGE_TAG:-lede-imagecompiler}
+DEF_IMAGE_TAG=openwrt-imagecompiler
+IMAGE_TAG=${IMAGE_TAG:-$DEF_IMAGE_TAG}
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 WORK_DIR=$SCRIPT_DIR/workdir
 
 function usage_and_exit {
     cat<<EOT
-Dockerized LEDE/OpenWRT compile environment.
+Dockerized OpenWRT compile environment.
 
 Usage: $1 COMMAND [OPTIONS] 
   COMMAND is one of:
@@ -23,7 +24,7 @@ Usage: $1 COMMAND [OPTIONS]
 
 Environment:
   IMAGE_TAG           - Tag to be used for docker image. 
-                        default: lede-imagecompiler
+                        (default: $DEF_IMAGE_TAG)
 
 Example:
   ./builder.sh shell
