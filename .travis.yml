@@ -1,0 +1,22 @@
+services:
+- docker
+
+env:
+  matrix:
+  - IMAGE_TAG=github.io/jandelgado/lede-dockercompiler
+  global:
+  - secure: m8NAhKMOIoE/2wU4oZ83ydOFc80kZjjfBR3ED46il2KQA1yUhUK2jk0t29iBmSSaTUVmXNbBaIoIgCCHyxG+th5J8tzoP+MddjRrBls+Xnm5tJTBTKeva7E9nICwZDOI0wF4nzibwnaZJuqVkmVCep3hwf2Vrcw5yTVcI9iG7ys7kEpxrWrNbEyPAWPh8VdZBdgr+usj2GHgVzxQW9mlXM9wa0OetPpddn7tmOIZbkPXr9+Uv+yHoRxmdeCGWgOhhm1dae9tzrRb8wHdrR5BowMVmXcOBjk2b9eLLpNy7MTQ6PsS8AEWtO7CHwbtz5MtxwxHhhJWFD6LrtyVnhsr9heZbMqDlo1SXarhQc2QB+LuJRkSUUkVNc6LiJux4sV3U6D7SBpbsA9oXKf8qXwte9D11FJppJtybrbl6HE7IaCozsAfWhjBoqCNT8vSCBeX8YOB66QO4LQDsNx2hnOOjD+fo9vlQHvsvl8rFkaWAjHxoBEmFDFCElp58PXRaDwLb1pXQ7E1hxKAlT7RA6h7wg//lZerS7s7wSdhZJH4JxjdM75Gsp6S+DSACy0y6BBZSK6f3hlYJsIdxL0hYo+XvVnb1z1Aoi2Ar+2xKpKfOGWTlrVowoJduK9um+DiEqFjBaQaXGRVx/3AUcwGq3bhrfHhsm4QaWMuc5wezhdcvNo=
+  - secure: fDTaQy1rG6Ms9kFe7FtIYB3kvHntf90f8Zp/gZqNi/emM1LlzUdCl65bSvUiPzp3YdEsT5OwArzj/ynSGxr1DEk9zgiNPnhOe36cpqanvWqoOITr67CAEg5gbFI9T10H8u60DpJmzwO0RgZWOVeA01vEe4CqapzoCbMmT4DA8OjQytnxjt2jf6EZWrp61xcy6G3q89MSKychnAIpP0QmgdurljjEZ6a7+Bt3sEeqiN/bB2xmRKSNqWByBm24ZAInZEQidwDb3A69Mrbvc++rC7vtAm+GrJlQ9uoEn/WyDuL2ZhCJf85rJMyIufBzHa5Z2awK+838+LcZNxvdyT3YzmL0Rw/J5P1ui/MIk82037ptV1pHZM2dKjSvjF7DylIv9UT1b8tIWCO6B/2PwBPWSgMtFaiQpblszw+gRfxPtOQqQOGZoBUuH4bMVdqWJKFH+gOSt/zgVgWXk4cgVd61VtqTYSoV2kTr1ZY5hn3MGXD5ZqNHSDTIIO4nyabAnKcSHe2oYOUjxlQGYQCBLAXxKrZO5YRf5OY0mvaJ6GXj6PaJ9ljSik8Qkz0qc4AkGJqWa2TYyNGewUyDSBIUejFxSyDZC9b0jxIE3AhvJvITiGUUJN5fINS6hoAbG9MuLCFTvgk0AI3Xk4HjmWsSHwShRTChuaW3zZy1NQts0lzTceY=
+
+script:
+- "./builder.sh build-docker-image --skip-sudo"
+
+after_success:
+- if [[ "$TRAVIS_BRANCH" != "master" ]]; then 
+    docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" docker.io 
+    docker tag ${IMAGE_TAG} ${IMAGE_TAG}:${TRAVIS_COMMIT}
+    docker tag ${IMAGE_TAG} ${IMAGE_TAG}:latest 
+    docker push ${IMAGE_TAG}:${TRAVIS_COMMIT}
+    docker push ${IMAGE_TAG}:latest 
+  fi
+

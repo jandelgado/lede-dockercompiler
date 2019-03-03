@@ -1,9 +1,10 @@
 #!/bin/bash
 # Docker based LEDE/OpenWRT build environment
+# (c) 2019 Jan Delgado
 set -e
 
 # base Tag to use for docker image
-IMAGE_TAG=lede-imagecompiler
+IMAGE_TAG=${IMAGE_TAG:-lede-imagecompiler}
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 WORK_DIR=$SCRIPT_DIR/workdir
 
@@ -17,8 +18,12 @@ Usage: $1 COMMAND [OPTIONS]
     shell             - start shell in docker container
 
   OPTIONS:
-  -o WORK_DIR         - working directory (default $WORK_DIR)
-  --skip-sudo         - call docker directly, without sudo
+    -o WORK_DIR       - working directory (default $WORK_DIR)
+    --skip-sudo       - call docker directly, without sudo
+
+Environment:
+  IMAGE_TAG           - Tag to be used for docker image. 
+                        default: lede-imagecompiler
 
 Example:
   ./builder.sh shell
@@ -29,7 +34,7 @@ EOT
 # build container 
 function build_docker_image {
     echo "building docker image $IMAGE_TAG ..."
-	$SUDO docker build -t $IMAGE_TAG docker
+	$SUDO docker build -t "$IMAGE_TAG" docker
 }
 
 function run_cmd_in_container {
@@ -37,7 +42,7 @@ function run_cmd_in_container {
 			--rm \
 			-e GOSU_USER=`id -u`:`id -g` \
             -v $(cd $WORK_DIR; pwd):/workdir:z \
-			-ti --rm $IMAGE_TAG "$@"
+			-ti --rm "$IMAGE_TAG" "$@"
 }
 
 # run a shell in the container, useful for debugging.
