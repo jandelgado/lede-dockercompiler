@@ -1,8 +1,8 @@
-# Dockerized LEDE/OpenWRT compile environment
+# Dockerized LEDE/OpenWrt compile environment
 
 [![Build Status](https://travis-ci.org/jandelgado/lede-dockercompiler.svg?branch=master)](https://travis-ci.org/jandelgado/lede-dockercompiler)
 
-A docker image to compile LEDE/OpenWRT images from source.
+A docker image to compile LEDE/OpenWrt images from source.
 
 
 <!-- vim-markdown-toc GitLab -->
@@ -13,7 +13,7 @@ A docker image to compile LEDE/OpenWRT images from source.
     * [Basic usage](#basic-usage)
     * [Compile an individual package](#compile-an-individual-package)
     * [Adding a new package](#adding-a-new-package)
-        * [Build the OpenWRT SDK](#build-the-openwrt-sdk)
+        * [Build the OpenWrt SDK](#build-the-openwrt-sdk)
         * [Create package structure](#create-package-structure)
         * [Working with patches](#working-with-patches)
             * [Change an existing patch](#change-an-existing-patch)
@@ -22,7 +22,7 @@ A docker image to compile LEDE/OpenWRT images from source.
 <!-- vim-markdown-toc -->
 
 Note: Look [here](https://github.com/jandelgado/lede-dockerbuilder) for a
-version which uses the LEDE/OpenWRT imager builder, which uses pre-compiled
+version which uses the LEDE/OpenWrt imager builder, which uses pre-compiled
 packages to build the actual image.
 
 ## Quickstart
@@ -36,7 +36,7 @@ $ docker run --rm -e GOSU_USER="$(id -ur):$(id -g)" \
              -ti --rm docker.io/jandelgado/openwrt-imagecompiler:latest bash
 ```
 
-This will take you to a bash shell with an OpenWRT build environment. Local
+This will take you to a bash shell with an OpenWrt build environment. Local
 directory `workdir` will be mounted to `/workdir` in the container. See below
 for how to use the image.
 
@@ -45,7 +45,7 @@ for how to use the image.
 Use the `builder.sh` to build and run the docker image:
 
 ```
-Dockerized LEDE/OpenWRT compile environment.
+Dockerized LEDE/OpenWrt compile environment.
 
 Usage: $1 COMMAND [OPTIONS]
   COMMAND is one of:
@@ -62,7 +62,7 @@ Example:
 
 First build the docker image with `./builder.sh build-docker-image`,
 then put your source files in the `workdir/` directory and start the acutal
-container with the OpenWRT build environment with `./builder.sh shell`.
+container with the OpenWrt build environment with `./builder.sh shell`.
 
 The last command will open a shell in the docker container with local the
 `workdir/` mounted to the directory `/workdir` in the container. Since
@@ -77,7 +77,7 @@ in the container, with the local `workdir` directory mounted as a volume to
 `/workdir` inside the container. On success, you'll see a prompt like
 `builder@567cbabfb36b:/workdir$`.
 
-Now execute the following commands in the container to prepare the OpenWRT
+Now execute the following commands in the container to prepare the OpenWrt
 source (see [this page for more
 details](https://lede-project.org/docs/guide-developer/quickstart-build-images)):
 
@@ -104,7 +104,7 @@ Add `V=s` for enhanced verbosity.
 
 ### Adding a new package
 
-This describes how to add a new OpenWRT package. We use the
+This describes how to add a new OpenWrt package. We use the
 [udptunnel](http://www.cs.columbia.edu/~lennox/udptunnel/) tool as an
 example.
 
@@ -112,10 +112,11 @@ See also
 
 * https://openwrt.org/docs/guide-developer/packages
 * https://github.com/openwrt/packages/blob/master/CONTRIBUTING.md
+* https://openwrt.org/docs/guide-developer/build-system/use-buildsystem
 
-#### Build the OpenWRT SDK
+#### Build the OpenWrt SDK
 
-First we need to build the OpenWRT SDK:
+First we need to build the OpenWrt SDK:
 
 ```bash
 $ make tools/install
@@ -131,11 +132,11 @@ and create at least a [Makefile as described here.](https://openwrt.org/docs/gui
 
 (Adapted from https://openwrt.org/docs/guide-developer/patches)
 
-To make the package compile as properly, we need to patch it. OpenWRT uses the
+To make the package compile as properly, we need to patch it. OpenWrt uses the
 [quilt](https://en.wikipedia.org/wiki/Quilt_(software) quilt tool for patch
 management.
 
-From the root of your OpenWRT tree, execute:
+From the root of your OpenWrt tree, execute:
 
 ```bash
 $ make package/network/util/udptunnel/{clean,prepare} V=s QUILT=1
@@ -147,7 +148,7 @@ $ cd build_dir/target-*/udptunnel-*
 ```
 
 First we have to apply existing patches (in case your are working on an
-exisiting OpenWRT package which already contains patches):
+exisiting OpenWrt package which already contains patches):
 
 ```bash
 $ quilt push -a
@@ -178,7 +179,7 @@ we can update the patch file, `010-main_code_fix.patch`:
 $ quilt refresh
 ```
 
-Change back to root of your OpenWRT tree and update the package with the
+Change back to root of your OpenWrt tree and update the package with the
 patch:
 
 ```bash
@@ -214,7 +215,7 @@ The workflow to change an exisiting patch is similar to the above described
 workflow:
 
 ```bash
-# start in root of your OpenWRT source tree
+# start in root of your OpenWrt source tree
 $ make package/network/utils/udptunnel/{clean,compile} V=s
 $ cd build_dir/target-*/udptunnel-*
 $ quilt series
