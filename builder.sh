@@ -4,7 +4,7 @@
 set -e
 
 # base Tag to use for docker image
-DEF_IMAGE_TAG=openwrt-imagecompiler
+DEF_IMAGE_TAG=jandelgado/openwrt-imagecompiler
 IMAGE_TAG=${IMAGE_TAG:-$DEF_IMAGE_TAG}
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 WORK_DIR=$SCRIPT_DIR/workdir
