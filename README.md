@@ -31,8 +31,8 @@ packages to build the actual image.
 You can directly start the image builder from the docker hub:
 
 ```
-$ mkdir workdir
-$ docker run --rm -e GOSU_USER="$(id -ur):$(id -g)" \
+$ mkdir -p workdir
+$ docker run --rm -e GOSU_UID="$(id -ur)" -e GOSU_GID="$(id -g)" \
              -v $(cd workdir; pwd):/workdir:z \
              -ti --rm docker.io/jandelgado/openwrt-imagecompiler:latest bash
 ```

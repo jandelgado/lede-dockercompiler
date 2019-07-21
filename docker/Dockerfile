@@ -1,8 +1,9 @@
-FROM gliderlabs/alpine:3.9
+FROM ubuntu:18.04
 LABEL maintainer "Jan Delgado <jdelgado@gmx.net>"
 
-
-RUN  apk add --update asciidoc bash bc binutils bzip2 cdrkit coreutils diffutils findutils flex g++ gawk gcc gettext git grep intltool libxslt linux-headers make ncurses-dev patch perl python2-dev tar unzip  util-linux wget zlib-dev xz\
+RUN apt-get update \
+     && apt-get install -y  build-essential libncurses5-dev wget \
+        zlib1g-dev gawk gcc-multilib flex git-core gettext libssl-dev unzip python \
      && rm -rf /var/cache/apk/*  \
      && mkdir /workdir /lede
 

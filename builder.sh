@@ -41,7 +41,7 @@ function build_docker_image {
 function run_cmd_in_container {
 	$SUDO docker run \
 			--rm \
-			-e GOSU_USER="$(id -ur):$(id -g)" \
+			-e GOSU_UID="$(id -ur)" -e GOSU_GID="$(id -g)" \
             -v "$(cd "$WORK_DIR"; pwd)":/workdir:z \
 			-ti --rm "$IMAGE_TAG" "$@"
 }
