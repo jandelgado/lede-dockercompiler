@@ -14,9 +14,10 @@ A docker image to compile LEDE/OpenWrt images from source.
     * [Compile an individual package](#compile-an-individual-package)
     * [Adding a new package](#adding-a-new-package)
         * [Build the OpenWrt SDK](#build-the-openwrt-sdk)
-        * [Create package structure](#create-package-structure)
-        * [Working with patches](#working-with-patches)
-            * [Change an existing patch](#change-an-existing-patch)
+        * [Create package structure (in-tree version)](#create-package-structure-in-tree-version)
+        * [Create package structure (custom feed version)](#create-package-structure-custom-feed-version)
+    * [Working with patches](#working-with-patches)
+        * [Change an existing patch](#change-an-existing-patch)
 * [Author and Copyright](#author-and-copyright)
 
 <!-- vim-markdown-toc -->
@@ -30,8 +31,8 @@ packages to build the actual image.
 You can directly start the image builder from the docker hub:
 
 ```
-$ mkdir workdir
-$ docker run --rm -e GOSU_USER="$(id -ur):$(id -g)" \
+$ mkdir -p workdir
+$ docker run --rm -e GOSU_UID="$(id -ur)" -e GOSU_GID="$(id -g)" \
              -v $(cd workdir; pwd):/workdir:z \
              -ti --rm docker.io/jandelgado/openwrt-imagecompiler:latest bash
 ```
@@ -70,6 +71,8 @@ workdir is externally mounted, it's contents will survive container restarts.
 
 ## Using the image
 
+Some tipps on using the OpenWrt SDK.
+
 ### Basic usage
 
 Start a container as described above.  This will take you straight into a shell
@@ -97,7 +100,6 @@ or in `/workdir/lede/bin/target` in the container.
 
 ```bash
 $ make packages/network/utils/tcpdump/{clean,compile}
-$ make packages/network/utils/tcpdump/install
 ```
 
 Add `V=s` for enhanced verbosity.
@@ -123,12 +125,59 @@ $ make tools/install
 $ make toolchain/install
 ```
 
-#### Create package structure
+#### Create package structure (in-tree version)
 
-We need to create a directory in a suitable place under the `package/` directory
-and create at least a [Makefile as described here.](https://openwrt.org/docs/guide-developer/packages). We will place our package in `package/network/util/udptunnel`.
+We need to create a directory in a suitable place under the `package/`
+directory and create at least a [Makefile as described
+here.](https://openwrt.org/docs/guide-developer/packages). We will place our
+package in `package/network/util/udptunnel`.
 
-#### Working with patches
+```
+udptunnel
+├── Makefile
+└── patches
+    ├── 001-multicast.patch
+    └── 002-main_code_fix.patch
+```
+
+Build the package with
+
+```
+$ make packages/network/utils/tcpdump/{clean,compile}
+```
+
+#### Create package structure (custom feed version)
+
+This time the we place the package in a custom feed, outside the OpenWrt root.
+We put our package to `/workdir/myfeed/net/udptunnel` (container path).
+
+The custom feed needs to be added to `feeds.conf.default`:
+
+```
+src-link myfeed /workdir/myfeed
+```
+
+Install the feed with 
+
+```
+$ ./scripts/feed update myfeed && ./scripts/feed install -a myfeed`
+```
+
+Now run `make menuconfig` and activate the custom feed under `[*] Image
+configuration` -> `[*] Separate feed repositories` -> `<*> enable feed myfeed`.
+
+The package should now be available within the `Network` category (because we
+chose `Network` as category in the Makefile). Compile the package manually with 
+
+```bash
+$ make package/udptunnel/{clean,compile}
+```
+
+See [OpenWrt Hello,
+world!](https://openwrt.org/docs/guide-developer/helloworld/start) for an
+in-depth description.
+
+### Working with patches
 
 (Adapted from https://openwrt.org/docs/guide-developer/patches)
 
@@ -209,7 +258,7 @@ Depending on your architecture, the resulting `ipk` package can be found under
 `./bin/packages/mipsel_24kc/base/udptunnel_1.1-1_mipsel_24kc.ipk`.
 
 
-##### Change an existing patch
+#### Change an existing patch
 
 The workflow to change an exisiting patch is similar to the above described
 workflow:
