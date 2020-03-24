@@ -1,0 +1,19 @@
+on: [pull_request]
+
+jobs:
+  build_docker_compose_job:
+    runs-on: ubuntu-latest
+    name: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: shellcheck
+        run: shellcheck builder.sh example/example.sh
+      - name: test build Docker image
+        run: ./builder.sh build-docker-image --skip-sudo
+      - name: test build OpenWrt image
+        run: |
+          mkdir -p workdir
+          cp example/example.sh workdir/
+          cp example/config-rpi3 workdir/config
+          ./builder.sh run -o workdir --skip-sudo -- sh -c "./example.sh"
