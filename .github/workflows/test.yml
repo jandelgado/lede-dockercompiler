@@ -14,6 +14,6 @@ jobs:
       - name: test build OpenWrt image
         run: |
           mkdir -p workdir
-          cp example/example.sh workdir/
-          cp example/config-rpi3 workdir/config
-          ./builder.sh run -o workdir --skip-sudo -- sh -c "./example.sh"
+          ./builder.sh run -o workdir --skip-sudo\
+                  --docker-opts "-v=$(pwd)/example:/workdir/example"\
+                  -- sh -c "./example/example.sh example/config-rpi3"

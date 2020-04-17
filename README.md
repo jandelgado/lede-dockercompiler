@@ -90,7 +90,11 @@ to build your own OpenWrt package.
 Start a container as described above.  This will take you straight into a shell
 in the container, with the local `workdir` directory mounted as a volume to
 `/workdir` inside the container. On success, you'll see a prompt like
-`builder@567cbabfb36b:/workdir$`.
+`builder@567cbabfb36b:/workdir$`. If you need to have additional files or 
+directories available in the container, they can be mounted using the 
+`--docker-opts` option, by providing the corresponding `docker run` mount
+commands. The [ci test workflow](.github/workflows/test.yml) provides an 
+[example](example/).
 
 Now execute the following commands in the container to prepare the OpenWrt
 source (see [this page for more
