@@ -46,19 +46,29 @@ for how to use the image.
 Use the `builder.sh` to build and run the docker image:
 
 ```
-Dockerized LEDE/OpenWrt compile environment.
+Dockerized OpenWRT compile environment.
 
-Usage: $1 COMMAND [OPTIONS]
+Usage: ./builder.sh COMMAND [OPTIONS] 
   COMMAND is one of:
-    build-docker-image- build docker image
-    shell             - start shell in docker container
+    build-docker-image    - build docker image
+    run CMD -- [ARGS...]  - run given command in docker container
+    shell                 - start shell in docker container
 
   OPTIONS:
-  -o WORK_DIR         - working directory
-  --skip-sudo         - call docker directly, without sudo
+    -o WORK_DIR           - working directory (default /home/paco/src/container-pi/lede-dockercompiler/workdir)
+    --rootfs-overlay DIR  - rootfs overlay directory
+    --skip-sudo           - call docker directly, without sudo
+    --docker-opts OPTS    - additional options to pass to docker. Can be specified
+                            multiple times.
+
+Environment:
+  IMAGE_TAG               - Tag to be used for docker image. 
+                            (default: jandelgado/openwrt-imagecompiler)
 
 Example:
   ./builder.sh shell
+  ./builder.sh run -- sh -c "cd lede && make menuconfig defconfig world"
+  ./builder.sh run --docker-opts "-v/tmp:/mytemp" -- bash
 ```
 
 First build the docker image with `./builder.sh build-docker-image`,
@@ -280,5 +290,5 @@ $ ( cd ../../.. && make package/network/utils/udptunnel/{clean,compile} V=s )
 
 ## Author and Copyright
 
-(C) Copyright 2019 Jan Delgado <jdelgado[at]gmx.net>
+(C) Copyright 2019-2020 Jan Delgado <jdelgado[at]gmx.net>
 
