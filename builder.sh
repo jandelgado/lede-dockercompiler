@@ -58,6 +58,7 @@ function run_cmd_in_container {
         rootfs="$(abspath "$ROOTFS_OVERLAY")"
         rootfs_volume=(-v "$rootfs":/rootfs-overlay:z)
     fi
+    # shellcheck disable=SC2068
 	$SUDO docker run \
 			--rm \
 			-e GOSU_UID="$(id -ur)" -e GOSU_GID="$(id -g)" \
@@ -65,7 +66,7 @@ function run_cmd_in_container {
             "${rootfs_volume[@]}" \
 			$docker_term_opts \
             --rm \
-            "${DOCKER_OPTS[@]}" \
+            ${DOCKER_OPTS[@]} \
             "$IMAGE_TAG" \
             "$@"
 }
@@ -108,6 +109,6 @@ case $COMMAND in
          run_cmd_in_container "$@" ;;
      shell) 
          run_cmd_in_container bash ;;
-     *) usage_and_exit "$0" ;;
+     *) usage "$0"; exit 0 ;;
 esac
 
