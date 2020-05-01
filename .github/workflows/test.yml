@@ -1,0 +1,19 @@
+on: [pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: shellcheck
+        run: shellcheck builder.sh example/example.sh
+      - name: test build Docker image
+        run: ./builder.sh build-docker-image --skip-sudo
+      - name: test build OpenWrt image
+        run: |
+          mkdir -p workdir
+          ./builder.sh run -o workdir --skip-sudo\
+                  --docker-opts "-v=$(pwd)/example:/workdir/example"\
+                  -- sh -c "./example/example.sh example/config-rpi3"

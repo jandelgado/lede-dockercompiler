@@ -3,7 +3,8 @@ LABEL maintainer "Jan Delgado <jdelgado@gmx.net>"
 
 RUN apt-get update \
      && apt-get install -y  build-essential libncurses5-dev wget \
-        zlib1g-dev gawk gcc-multilib flex git-core gettext libssl-dev unzip python \
+        zlib1g-dev gawk gcc-multilib flex git-core gettext libssl-dev unzip \
+        python3 python rsync\
      && rm -rf /var/cache/apk/*  \
      && mkdir /workdir /lede
 
