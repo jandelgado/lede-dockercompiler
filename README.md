@@ -1,6 +1,6 @@
 # Dockerized LEDE/OpenWrt compile environment
 
-[![Build Status](https://travis-ci.org/jandelgado/lede-dockercompiler.svg?branch=master)](https://travis-ci.org/jandelgado/lede-dockercompiler)
+![.github/workflows/test.yml](https://github.com/jandelgado/lede-dockercompiler/workflows/.github/workflows/test.yml/badge.svg)
 
 A docker image to compile LEDE/OpenWrt images from source.
 
