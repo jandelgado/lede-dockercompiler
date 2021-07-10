@@ -16,4 +16,4 @@ jobs:
           mkdir -p workdir
           ./builder.sh run -o workdir --skip-sudo\
                   --docker-opts "-v=$(pwd)/example:/workdir/example"\
-                  -- sh -c "./example/example.sh example/config-rpi3"
+                  -- sh -c "\"./example/example.sh example/config-rpi3\""
