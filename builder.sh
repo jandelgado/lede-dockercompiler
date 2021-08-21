@@ -3,8 +3,7 @@
 # (c) 2019-2020 Jan Delgado
 set -euo pipefail
 
-# base Tag to use for docker image
-DEF_IMAGE_NAME=jandelgado/openwrt-imagecompiler
+DEF_IMAGE_NAME=ghcr.io/jandelgado/lede-dockercompiler
 IMAGE_NAME=${IMAGE_NAME:-$DEF_IMAGE_NAME}
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 WORK_DIR=$SCRIPT_DIR/workdir
@@ -27,7 +26,7 @@ Usage: $1 COMMAND [OPTIONS]
     --skip-sudo           - call docker directly, without sudo
 
 Environment:
-  IMAGE_NAME               - Tag to be used for docker image. 
+  IMAGE_NAME               - docker image to use
                             (default: $DEF_IMAGE_NAME)
 
 Example:
@@ -46,7 +45,8 @@ function abspath {
 # build container 
 function build_docker_image {
     echo "building docker image $IMAGE_NAME ..."
-	$SUDO docker build -t "$IMAGE_NAME" docker
+    # shellcheck disable=SC2068
+	$SUDO docker build -t "$IMAGE_NAME" docker ${DOCKER_OPTS[@]} 
 }
 
 function run_cmd_in_container {
