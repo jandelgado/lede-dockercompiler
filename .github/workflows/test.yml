@@ -41,5 +41,5 @@ jobs:
                   -- sh -c "./example/example.sh example/config-rpi3"
       - uses: actions/upload-artifact@v2
         with:
-        name: example image
-        path: workdir/lede/bin/targets
+          name: example image
+          path: workdir/lede/bin/targets
