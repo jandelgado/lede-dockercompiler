@@ -4,8 +4,8 @@
 set -euo pipefail
 
 # base Tag to use for docker image
-DEF_IMAGE_TAG=jandelgado/openwrt-imagecompiler
-IMAGE_TAG=${IMAGE_TAG:-$DEF_IMAGE_TAG}
+DEF_IMAGE_NAME=jandelgado/openwrt-imagecompiler
+IMAGE_NAME=${IMAGE_NAME:-$DEF_IMAGE_NAME}
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 WORK_DIR=$SCRIPT_DIR/workdir
 
@@ -27,8 +27,8 @@ Usage: $1 COMMAND [OPTIONS]
     --skip-sudo           - call docker directly, without sudo
 
 Environment:
-  IMAGE_TAG               - Tag to be used for docker image. 
-                            (default: $DEF_IMAGE_TAG)
+  IMAGE_NAME               - Tag to be used for docker image. 
+                            (default: $DEF_IMAGE_NAME)
 
 Example:
   ./builder.sh shell
@@ -45,8 +45,8 @@ function abspath {
 
 # build container 
 function build_docker_image {
-    echo "building docker image $IMAGE_TAG ..."
-	$SUDO docker build -t "$IMAGE_TAG" docker
+    echo "building docker image $IMAGE_NAME ..."
+	$SUDO docker build -t "$IMAGE_NAME" docker
 }
 
 function run_cmd_in_container {
@@ -67,7 +67,7 @@ function run_cmd_in_container {
 			$docker_term_opts \
             --rm \
             ${DOCKER_OPTS[@]} \
-            "$IMAGE_TAG" \
+            "$IMAGE_NAME" \
             "$@"
 }
 
