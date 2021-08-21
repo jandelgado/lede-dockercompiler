@@ -63,7 +63,7 @@ Usage: ./builder.sh COMMAND [OPTIONS]
     --skip-sudo           - call docker directly, without sudo
 
 Environment:
-  IMAGE_TAG               - Tag to be used for docker image. 
+  IMAGE_NAME              - Tag to be used for docker image. 
                             (default: jandelgado/openwrt-imagecompiler)
 
 Example:
