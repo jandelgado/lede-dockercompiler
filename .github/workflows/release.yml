@@ -26,9 +26,9 @@ jobs:
       - name: push Docker image
         run: |
           TAG=${GITHUB_REF#refs/tags/}
-          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${GITHUB_SHA}
-          docker tag ${IMAGE_NAME}:${GITHUB_SHA} ${IMAGE_NAME}:${TAG}
-          docker tag ${IMAGE_NAME}:${GITHUB_SHA} ${IMAGE_NAME}:latest
+          docker tag ${IMAGE_NAME} ${REGISTRY}/${IMAGE_NAME}:${GITHUB_SHA}
+          docker tag ${IMAGE_NAME} ${REGISTRY}/${IMAGE_NAME}:${TAG}
+          docker tag ${IMAGE_NAME} ${REGISTRY}/${IMAGE_NAME}:latest
           docker push ${REGISTRY}/${IMAGE_NAME}:${GITHUB_SHA}
           docker push ${REGISTRY}/${IMAGE_NAME}:${TAG}
           docker push ${REGISTRY}/${IMAGE_NAME}:latest
