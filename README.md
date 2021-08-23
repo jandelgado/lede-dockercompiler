@@ -1,6 +1,6 @@
 # Dockerized LEDE/OpenWrt compile environment
 
-![.github/workflows/test.yml](https://github.com/jandelgado/lede-dockercompiler/workflows/.github/workflows/test.yml/badge.svg)
+[![test](https://github.com/jandelgado/lede-dockercompiler/actions/workflows/test.yml/badge.svg)](https://github.com/jandelgado/lede-dockercompiler/actions/workflows/test.yml)
 
 A docker image to compile LEDE/OpenWrt images from source.
 
