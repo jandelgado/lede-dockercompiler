@@ -1,5 +1,14 @@
 # Changelog for lede-dockercompiler
 
+## 1.2.0 - [2021-08-21]
+
+* bumped to OpenWrt 21.02.0-rc4
+ 
+## 1.1.0 - [2021-08-20]
+
+* bumped to OpenWrt 19.07.7
+* use ghcr.io container registry
+
 ## 1.0.0 - [2020-04-16]
 
 * changelog and versioning started

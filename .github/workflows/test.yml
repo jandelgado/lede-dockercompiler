@@ -9,29 +9,57 @@ jobs:
   test:
     env:
       REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository }}
     runs-on: ubuntu-latest
     name: test
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: shellcheck
         run: shellcheck builder.sh example/example.sh
-      - name: Log in to the Container registry
+
+      - name: Log in to the container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: test build Docker image
+        env:
+          IMAGE_NAME: ${{ env.REGISTRY }}/${{ github.repository }}
         run: |
-          docker pull ${REGISTRY}/${IMAGE_NAME} || true
-          ./builder.sh build-docker-image --skip-sudo
+          docker pull ${IMAGE_NAME} || true
+          DOCKER_OPTS="--cache-from ${IMAGE_NAME}:latest"
+          ./builder.sh build-docker-image --skip-sudo --docker-opts "$DOCKER_OPTS"
+
+      - name: test run command in container using shell command
+        run: |
+          OUT=$(echo "pwd" | ./builder.sh shell --skip-sudo)
+          if [ "$OUT" != "/workdir" ]; then
+            echo "ERROR (shell): expected pwd in builder container to return /workdir but got $OUT"
+            exit 1
+          fi
+      - name: test run command in container
+        run: |
+          OUT=$(./builder.sh run --skip-sudo -o workdir -- sh -c "pwd")
+          if [ "$OUT" != "/workdir" ]; then
+            echo "ERROR (run): expected pwd in builder container to return /workdir but got $OUT"
+            exit 1
+          fi
+
       - name: test build OpenWrt image
         env:
-          OPENWRT_VERSION: v19.07.7
+          OPENWRT_VERSION: "v21.02.0-rc4"
         run: |
           mkdir -p workdir
-          ./builder.sh run -o workdir --skip-sudo\
+          ./builder.sh run --skip-sudo\
+                  -o workdir\
                   --docker-opts "-v=$(pwd)/example:/workdir/example"\
-                  -- sh -c "./example/example.sh example/config-rpi3"
+                  --docker-opts "-e=OPENWRT_VERSION=${OPENWRT_VERSION}" \
+                  -- sh -c "./example/example.sh example/config-rpi"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: example image
+          path: workdir/openwrt/bin/targets/bcm27xx/bcm2709/

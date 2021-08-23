@@ -29,13 +29,14 @@ limitations regarding customizations).
 
 ## Quickstart
 
-You can directly start the image builder from the docker hub:
+You can directly start the image builder from the github container registry 
+ghcr.io:
 
 ```
 $ mkdir -p workdir
 $ docker run --rm -e GOSU_UID="$(id -ur)" -e GOSU_GID="$(id -g)" \
              -v $(cd workdir; pwd):/workdir:z \
-             -ti --rm jandelgado/openwrt-imagecompiler:latest bash
+             -ti --rm ghcr.io/jandelgado/lede-dockercompiler:latest bash
 ```
 
 This will take you to a bash shell with an OpenWrt build environment. Local
