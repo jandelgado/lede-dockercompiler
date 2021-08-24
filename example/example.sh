@@ -23,6 +23,9 @@ git pull
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a
+
+# expand configuration
 make defconfig
+# build
 make -j $(( $(nproc) + 1))
 

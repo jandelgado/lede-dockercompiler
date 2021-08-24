@@ -1,5 +1,9 @@
 # Changelog for lede-dockercompiler
 
+## 1.2.1 [2021-08-22]
+
+* use `exec chroot` instead of `gosu`
+
 ## 1.2.0 - [2021-08-21]
 
 * bumped to OpenWrt 21.02.0-rc4
