@@ -1,6 +1,6 @@
 # Changelog for lede-dockercompiler
 
-## 1.3.0 - [2021-08-22]
+## 1.2.1 [2021-08-22]
 
 * use `exec chroot` instead of `gosu`
 
